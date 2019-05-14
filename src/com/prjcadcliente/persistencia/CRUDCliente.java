@@ -68,7 +68,8 @@ public class CRUDCliente {
 			return msg;
 	}
 	public String atualizar(Cliente cliente) {
-	String msg = "";
+	
+		String msg = "";
 		
 		//Criação dos objetos para a conexão com o banco de dados
 		
@@ -106,7 +107,8 @@ public class CRUDCliente {
 			return msg;
 	}
 	public String deletar(Cliente cliente) {
-	String msg = "";
+	
+		String msg = "";
 		
 		//Criação dos objetos para a conexão com o banco de dados
 		
@@ -114,7 +116,7 @@ public class CRUDCliente {
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/clientedb","root","");
 			
-			String consulta = "DELETE FROM tbcliente(nome,email,telefone,idade)values(?,?,?,?)";
+			String consulta = "DELETE FROM tbcliente WHERE id=?";
 			
 			pst = con.prepareStatement(consulta);
 			
@@ -122,16 +124,17 @@ public class CRUDCliente {
 			pst.setString(2, cliente.getEmail());
 			pst.setString(3, cliente.getTelefone());
 			pst.setInt(4, cliente.getIdade());
+			pst.setInt(5, cliente.getId());
 			
 			int r = pst.executeUpdate();
 			
 			if(r > 0)
-				msg = "Cadastro realizado com sucesso";
+				msg = "Deletado com sucesso";
 			else
-				msg = "Nao foi possivel cadastrar";
+				msg = "Nao foi possivel deletar";
 		}
 		catch(SQLException ex) {
-			msg = "Erro ao tentar cadastrar;"+ex.getMessage();
+			msg = "Erro ao tentar deletar;"+ex.getMessage();
 		}
 		catch(Exception e) {
 			msg = "Erro inesperado: "+e.getMessage();
