@@ -38,7 +38,7 @@ public class CRUDCliente {
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/clientedb","root","");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clientedb?serverTimezone=UTC","root","");
 			
 			String consulta = "INSERT INTO tbcliente(nome,email,telefone,idade)values(?,?,?,?)";
 			
@@ -76,9 +76,9 @@ public class CRUDCliente {
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/clientedb","root","");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clientedb?serverTimezone=UTC","root","");
 			
-			String consulta = "UPDATE tbcliente SET nome=?,email=?,telefone=?,idade=? WHERE id=?)";
+			String consulta = "UPDATE tbcliente SET nome=?,email=?,telefone=?,idade=? WHERE id=?";
 			
 			pst = con.prepareStatement(consulta);
 			
@@ -115,17 +115,14 @@ public class CRUDCliente {
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/clientedb","root","");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clientedb?serverTimezone=UTC","root","");
 			
 			String consulta = "DELETE FROM tbcliente WHERE id=?";
 			
 			pst = con.prepareStatement(consulta);
 			
-			pst.setString(1, cliente.getNome());
-			pst.setString(2, cliente.getEmail());
-			pst.setString(3, cliente.getTelefone());
-			pst.setInt(4, cliente.getIdade());
-			pst.setInt(5, cliente.getId());
+			pst.setInt(1, cliente.getId());
+
 			
 			int r = pst.executeUpdate();
 			
@@ -152,7 +149,7 @@ public class CRUDCliente {
 		//carregar o drive de comunicacao com o banco de dados
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
 		//chamar o gerenciador de driver
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/clienteedb","root","");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clienteedb?serverTimezone=UTC","root","");
 		//vamos criar a consulta para selecionar os clientes por nome
 			String consulta = "Select * from tbcliente where nome=?";
 			pst = con.prepareStatement(consulta);
@@ -186,7 +183,41 @@ public class CRUDCliente {
 		return lista;
 	}
 	public Cliente PesquisarPorId(int id){
-		return null;
+		 Cliente cliente = new Cliente();
+		try{
+		//carregar o drive de comunicacao com o banco de dados
+			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+		//chamar o gerenciador de driver
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clienteedb?serverTimezone=UTC","root","");
+		//vamos criar a consulta para selecionar os clientes por nome
+			String consulta = "Select * from tbcliente where id=?";
+			pst = con.prepareStatement(consulta);
+			pst.setInt(1, id);
+		//vamos executar a consulta e guardar o resultado na variável rs
+			rs = pst.executeQuery();
+		//vamos pegar um cliente por vez que esta no rs e adiciona-lo à lista de clientes para, então, retorna-la
+		if(rs.next()){
+			cliente.setId(rs.getInt(0));
+			cliente.setNome(rs.getString(1));
+			cliente.setEmail(rs.getString(2));
+			cliente.setTelefone(rs.getString(3));
+			cliente.setIdade(rs.getInt(4));
+		}
+		}//fim do try
+		catch (SQLException ex){		
+			ex.printStackTrace();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			try{con.close();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	    }
+		return cliente;
 	}
 	public List<Cliente> PesquisarTodos(){
 		List<Cliente> lista = new ArrayList<Cliente>();
@@ -194,7 +225,7 @@ public class CRUDCliente {
 		//carregar o drive de comunicacao com o banco de dados
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
 		//chamar o gerenciador de driver
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/clienteedb","root","");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clienteedb?serverTimezone=UTC","root","");
 		//vamos criar a consulta para selecionar os clientes por nome
 			String consulta = "Select * from tbcliente";
 			pst = con.prepareStatement(consulta);
